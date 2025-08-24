@@ -1,4 +1,3 @@
-
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 import { CartProvider } from './contexts/CartContext'
@@ -22,6 +21,8 @@ import ShippingDelivery from './components/FootersectionData/ShippingDelivery'
 import WhatsAppButton from './components/Home/WhatsAppButton'
 import PrivacyPolicy from './components/FootersectionData/PrivacyPolicy'
 import WishlistPage from './pages/Wishlist'
+import AuthCallback from './pages/AuthCallback' // Add this import
+
 function App() {
   return (
     <AuthProvider>
@@ -40,15 +41,16 @@ function App() {
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/profile" element={<Profile />} />
                 <Route path="/orders" element={<Orders />} />
-                 <Route path="/AboutUs" element={<AboutUs />} /> 
-                 <Route path="/CancellationPolicy" element={<CancellationPolicy />} /> 
-                  <Route path="/TermsofService" element={<TermsofService/>} /> 
-                   <Route path="/CustomizeSize" element={<CustomizeSize/>} /> 
-                   <Route path="/SizeChart" element={<SizeChart/>}/>
-                    <Route path="/ContactUs" element={<ContactUs/>} /> 
-                    <Route path="/ShippingDelivery" element={<ShippingDelivery/>} /> 
-                    <Route path="/PrivacyPolicy" element={<PrivacyPolicy/>} />
-                    <Route path="/Wishlist" element={<WishlistPage/>} />
+                <Route path="/auth/callback" element={<AuthCallback />} /> {/* Add this line */}
+                <Route path="/AboutUs" element={<AboutUs />} /> 
+                <Route path="/CancellationPolicy" element={<CancellationPolicy />} /> 
+                <Route path="/TermsofService" element={<TermsofService/>} /> 
+                <Route path="/CustomizeSize" element={<CustomizeSize/>} /> 
+                <Route path="/SizeChart" element={<SizeChart/>}/>
+                <Route path="/ContactUs" element={<ContactUs/>} /> 
+                <Route path="/ShippingDelivery" element={<ShippingDelivery/>} /> 
+                <Route path="/PrivacyPolicy" element={<PrivacyPolicy/>} />
+                <Route path="/Wishlist" element={<WishlistPage/>} />
               </Routes>
               
             </main>

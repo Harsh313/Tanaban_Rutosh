@@ -103,22 +103,22 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }
 
   const signInWithGoogle = async () => {
-    try {
-      // Dynamically choose correct redirect URL (localhost vs production)
-      const redirectUrl =
-        process.env.NODE_ENV === 'development'
-          ? 'http://localhost:3000'
-          : window.location.origin
+  try {
+    // Use a specific callback route instead of root
+    const redirectUrl =
+      process.env.NODE_ENV === 'development'
+        ? 'http://localhost:3000/auth/callback'
+        : `${window.location.origin}/auth/callback`
 
-      return await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: { redirectTo: redirectUrl }
-      })
-    } catch (error) {
-      console.error('Google sign in error:', error)
-      throw error
-    }
+    return await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: redirectUrl }
+    })
+  } catch (error) {
+    console.error('Google sign in error:', error)
+    throw error
   }
+}
 
   const signOut = async () => {
     try {
