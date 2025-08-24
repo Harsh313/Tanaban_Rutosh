@@ -37,7 +37,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
+      async (_event, session) => {
         setSession(session)
         setUser(session?.user ?? null)
         setLoading(false)
@@ -49,13 +49,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signIn = async (email: string, password: string) => {
     try {
-      console.log('Attempting to sign in with:', { email }) // Debug log
       const result = await supabase.auth.signInWithPassword({ email, password })
-      
-      if (result.error) {
-        console.error('Sign in error:', result.error)
-      }
-      
+      if (result.error) console.error('Sign in error:', result.error)
       return result
     } catch (error) {
       console.error('Sign in exception:', error)
@@ -65,36 +60,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signUp = async (email: string, password: string, fullName: string) => {
     try {
-      console.log('Attempting to sign up with:', { email, fullName }) // Debug log
-      
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          data: {
-            full_name: fullName
-          }
+          data: { full_name: fullName }
         }
       })
 
-      if (error) {
-        console.error('Sign up error:', error)
-        return { data, error }
-      }
+      if (error) return { data, error }
 
-      // Only create profile if user was successfully created
-      if (data.user && !error) {
-        console.log('Creating profile for user:', data.user.id) // Debug log
-        
+      if (data.user) {
         const profileData = {
           id: data.user.id,
           email: data.user.email!,
           full_name: fullName,
-          username: fullName.toLowerCase().replace(/\s+/g, ''), // Generate username from full name
+          username: fullName.toLowerCase().replace(/\s+/g, ''),
           phone: '',
           date_of_birth: '',
           bio: '',
-          address: null, // Use null instead of empty object
+          address: null,
           preferences: {
             newsletter: true,
             sms_notifications: false,
@@ -102,19 +87,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           },
           avatar_url: ''
         }
-        
-        const { error: profileError } = await supabase
-          .from('profiles')
-          .insert(profileData)
 
+        const { error: profileError } = await supabase.from('profiles').insert(profileData)
         if (profileError) {
           console.error('Profile creation error:', profileError)
-          // You might want to delete the auth user if profile creation fails
-          // await supabase.auth.admin.deleteUser(data.user.id)
           return { data, error: profileError }
         }
-
-        console.log('Profile created successfully') // Debug log
       }
 
       return { data, error }
@@ -126,11 +104,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signInWithGoogle = async () => {
     try {
+      // Dynamically choose correct redirect URL (localhost vs production)
+      const redirectUrl =
+        process.env.NODE_ENV === 'development'
+          ? 'http://localhost:3000'
+          : window.location.origin
+
       return await supabase.auth.signInWithOAuth({
         provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback`
-        }
+        options: { redirectTo: redirectUrl }
       })
     } catch (error) {
       console.error('Google sign in error:', error)
@@ -157,9 +139,5 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     signOut
   }
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  )
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
 }
