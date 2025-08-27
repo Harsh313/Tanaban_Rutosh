@@ -104,11 +104,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const signInWithGoogle = async () => {
   try {
-    // Use a specific callback route instead of root
     const redirectUrl =
       process.env.NODE_ENV === 'development'
-        ? 'http://localhost:3000/auth/callback'
-        : `${window.location.origin}/auth/callback`
+        ? 'http://localhost:3000'
+        : window.location.origin
 
     return await supabase.auth.signInWithOAuth({
       provider: 'google',

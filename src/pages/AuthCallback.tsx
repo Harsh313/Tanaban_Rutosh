@@ -50,8 +50,8 @@ const AuthCallback: React.FC = () => {
             }
           }
 
-          // Redirect to dashboard or home page
-          navigate('/') // or wherever you want to redirect after successful login
+          // Redirect to home page after successful login
+          navigate('/')
         } else {
           navigate('/login')
         }
