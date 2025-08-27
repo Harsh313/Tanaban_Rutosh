@@ -1,37 +1,54 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { supabase } from "../lib/supabase";
+// src/pages/AuthCallback.jsx or similar
+import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { supabase } from '../lib/supabase'
 
 const AuthCallback = () => {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   useEffect(() => {
     const handleAuthCallback = async () => {
-      // ✅ This parses the URL fragment (?code, access_token, etc.)
-      const { data, error } = await supabase.auth.exchangeCodeForSession(window.location.href);
+      try {
+        // Get the hash fragment from the URL
+        const hashFragment = window.location.hash
 
-      if (error) {
-        console.error("Error exchanging code:", error);
-        navigate("/login");
-        return;
+        if (hashFragment) {
+          // Supabase will automatically handle the session from the hash
+          const { data, error } = await supabase.auth.getSession()
+          
+          if (error) {
+            console.error('Auth callback error:', error)
+            navigate('/login?error=auth_error')
+            return
+          }
+
+          if (data.session) {
+            // Success - redirect to dashboard or home
+            navigate('/dashboard') // or wherever you want to redirect
+          } else {
+            navigate('/login')
+          }
+        } else {
+          // No hash fragment, redirect to login
+          navigate('/login')
+        }
+      } catch (error) {
+        console.error('Auth callback error:', error)
+        navigate('/login?error=callback_error')
       }
+    }
 
-      if (data.session) {
-        console.log("User signed in:", data.session.user);
-        navigate("/profile"); // redirect wherever you want
-      } else {
-        navigate("/login");
-      }
-    };
-
-    handleAuthCallback();
-  }, [navigate]);
+    handleAuthCallback()
+  }, [navigate])
 
   return (
-    <div className="flex justify-center items-center h-screen">
-      <p>Signing you in...</p>
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+        <p className="mt-4 text-gray-600">Completing sign in...</p>
+      </div>
     </div>
-  );
-};
+  )
+}
 
-export default AuthCallback;
+export default AuthCallback

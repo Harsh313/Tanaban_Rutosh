@@ -28,96 +28,106 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    // ✅ Just get current session (AuthCallback already exchanges the code)
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // Get initial session
+    const getInitialSession = async () => {
+      const { data: { session }, error } = await supabase.auth.getSession()
+      
+      if (error) {
+        console.error('Error getting session:', error)
+      }
+      
       setSession(session)
       setUser(session?.user ?? null)
       setLoading(false)
-    })
+    }
+
+    getInitialSession()
 
     // Listen for auth changes
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('Auth state changed:', event, session?.user?.email)
+      
       setSession(session)
       setUser(session?.user ?? null)
       setLoading(false)
 
-      // Profile creation logic (kept as is)
+      // Handle profile creation for new users
       if (event === "SIGNED_IN" && session?.user) {
-        const { data: existingProfile } = await supabase
-          .from("profiles")
-          .select("id")
-          .eq("id", session.user.id)
-          .single()
-
-        if (!existingProfile) {
-          const fullName =
-            session.user.user_metadata?.full_name ||
-            session.user.user_metadata?.name ||
-            session.user.email?.split("@")[0] ||
-            "User"
-
-          const profileData = {
-            id: session.user.id,
-            email: session.user.email!,
-            full_name: fullName,
-            username: fullName.toLowerCase().replace(/\s+/g, ""),
-            phone: "",
-            date_of_birth: "",
-            bio: "",
-            address: null,
-            preferences: {
-              newsletter: true,
-              sms_notifications: false,
-              email_notifications: true,
-            },
-            avatar_url: session.user.user_metadata?.avatar_url || "",
-          }
-
-          const { error: profileError } = await supabase
-            .from("profiles")
-            .insert(profileData)
-
-          if (profileError) {
-            console.error("Profile creation error:", profileError)
-          }
-        }
+        await createUserProfile(session.user)
       }
     })
 
     return () => subscription.unsubscribe()
   }, [])
 
+  const createUserProfile = async (user: User) => {
+    try {
+      // Check if profile already exists
+      const { data: existingProfile } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("id", user.id)
+        .single()
+
+      if (!existingProfile) {
+        const fullName =
+          user.user_metadata?.full_name ||
+          user.user_metadata?.name ||
+          user.email?.split("@")[0] ||
+          "User"
+
+        const profileData = {
+          id: user.id,
+          email: user.email!,
+          full_name: fullName,
+          username: fullName.toLowerCase().replace(/\s+/g, ""),
+          phone: "",
+          date_of_birth: "",
+          bio: "",
+          address: null,
+          preferences: {
+            newsletter: true,
+            sms_notifications: false,
+            email_notifications: true,
+          },
+          avatar_url: user.user_metadata?.avatar_url || "",
+        }
+
+        const { error: profileError } = await supabase
+          .from("profiles")
+          .insert(profileData)
+
+        if (profileError) {
+          console.error("Profile creation error:", profileError)
+        } else {
+          console.log("Profile created successfully")
+        }
+      }
+    } catch (error) {
+      console.error("Error in createUserProfile:", error)
+    }
+  }
+
   const signIn = async (email: string, password: string) => {
-    return await supabase.auth.signInWithPassword({ email, password })
+    const result = await supabase.auth.signInWithPassword({ email, password })
+    return result
   }
 
   const signUp = async (email: string, password: string, fullName: string) => {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { data: { full_name: fullName } },
+      options: { 
+        data: { full_name: fullName },
+        // Add email confirmation redirect if needed
+        emailRedirectTo: `${window.location.origin}/auth/callback`
+      },
     })
 
-    if (!error && data.user) {
-      await supabase.from("profiles").insert({
-        id: data.user.id,
-        email: data.user.email!,
-        full_name: fullName,
-        username: fullName.toLowerCase().replace(/\s+/g, ""),
-        phone: "",
-        date_of_birth: "",
-        bio: "",
-        address: null,
-        preferences: {
-          newsletter: true,
-          sms_notifications: false,
-          email_notifications: true,
-        },
-        avatar_url: "",
-      })
-    }
+    // Note: Profile creation will be handled by the auth state change listener
+    // when the user confirms their email and signs in
 
     return { data, error }
   }
@@ -127,13 +137,26 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       ? "http://localhost:5173/auth/callback"
       : `${window.location.origin}/auth/callback`
 
-    return await supabase.auth.signInWithOAuth({
+    console.log('OAuth redirect URL:', redirectUrl)
+
+    const result = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: redirectUrl },
+      options: { 
+        redirectTo: redirectUrl,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        }
+      },
     })
+
+    return result
   }
 
-  const signOut = async () => await supabase.auth.signOut()
+  const signOut = async () => {
+    const result = await supabase.auth.signOut()
+    return result
+  }
 
   return (
     <AuthContext.Provider
