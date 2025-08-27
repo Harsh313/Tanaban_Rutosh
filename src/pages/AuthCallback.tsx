@@ -7,19 +7,19 @@ const AuthCallback = () => {
 
   useEffect(() => {
     const handleAuthCallback = async () => {
-      const { data, error } = await supabase.auth.getSession();
+      // ✅ This parses the URL fragment (?code, access_token, etc.)
+      const { data, error } = await supabase.auth.exchangeCodeForSession(window.location.href);
 
       if (error) {
-        console.error("Error retrieving session:", error);
+        console.error("Error exchanging code:", error);
         navigate("/login");
         return;
       }
 
       if (data.session) {
-        // User is signed in, redirect to profile (or home)
-        navigate("/profile");
+        console.log("User signed in:", data.session.user);
+        navigate("/profile"); // redirect wherever you want
       } else {
-        // No session, send to login
         navigate("/login");
       }
     };
