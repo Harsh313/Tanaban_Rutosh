@@ -37,10 +37,50 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
+      async (event, session) => {
         setSession(session)
         setUser(session?.user ?? null)
         setLoading(false)
+
+        // Handle Google OAuth profile creation
+        if (event === 'SIGNED_IN' && session?.user) {
+          const { data: existingProfile } = await supabase
+            .from('profiles')
+            .select('id')
+            .eq('id', session.user.id)
+            .single()
+
+          if (!existingProfile) {
+            const fullName = session.user.user_metadata?.full_name || 
+                            session.user.user_metadata?.name || 
+                            session.user.email?.split('@')[0] || 'User'
+            
+            const profileData = {
+              id: session.user.id,
+              email: session.user.email!,
+              full_name: fullName,
+              username: fullName.toLowerCase().replace(/\s+/g, ''),
+              phone: '',
+              date_of_birth: '',
+              bio: '',
+              address: null,
+              preferences: {
+                newsletter: true,
+                sms_notifications: false,
+                email_notifications: true
+              },
+              avatar_url: session.user.user_metadata?.avatar_url || ''
+            }
+
+            const { error: profileError } = await supabase
+              .from('profiles')
+              .insert(profileData)
+            
+            if (profileError) {
+              console.error('Profile creation error:', profileError)
+            }
+          }
+        }
       }
     )
 
@@ -103,21 +143,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }
 
   const signInWithGoogle = async () => {
-  try {
-    const redirectUrl =
-      process.env.NODE_ENV === "development"
-        ? "http://localhost:3000"
+    try {
+      const redirectUrl = import.meta.env.DEV
+        ? "http://localhost:5173"
         : window.location.origin
 
-    return await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: redirectUrl }
-    })
-  } catch (error) {
-    console.error("Google sign in error:", error)
-    throw error
+      return await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: { redirectTo: redirectUrl }
+      })
+    } catch (error) {
+      console.error("Google sign in error:", error)
+      throw error
+    }
   }
-}
 
   const signOut = async () => {
     try {
