@@ -32,14 +32,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   useEffect(() => {
     const fetchWishlistStatus = async () => {
       console.log("🔍 Checking wishlist status for product:", product.id)
-        const { data: { user }, error: userError } = await supabase.auth.getUser()
-    
-        if (!user) return
+      const { data: { user }, error: userError } = await supabase.auth.getUser()
 
       if (userError) {
         console.error(" Error fetching user:", userError)
         return
       }
+      
       if (!user) {
         console.log("ℹ No user logged in — skipping wishlist check")
         return
@@ -52,7 +51,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         .eq("product_id", product.id)
         .single()
 
- if (error && error.code !== "PGRST116") { // Ignore 'No rows found' error
+      if (error && error.code !== "PGRST116") { // Ignore 'No rows found' error
         console.error(" Error checking wishlist:", error)
       } else if (data) {
         console.log(" Product is in wishlist:", data)
@@ -147,16 +146,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           />
 
           {/* Wishlist Button */}
-      <button
-        onClick={toggleWishlist}
-        className="absolute top-2 right-2 bg-white rounded-full p-2 shadow"
-      >
-        <Heart
-          className={`h-5 w-5 transition ${
-            isWishlisted ? "fill-red-500 text-red-500" : "text-gray-600"
-          }`}
-        />
-      </button>
+          <button
+            onClick={toggleWishlist}
+            className="absolute top-2 right-2 bg-white rounded-full p-2 shadow hover:shadow-md transition-shadow"
+          >
+            <Heart
+              className={`h-5 w-5 transition-colors ${
+                isWishlisted ? "fill-red-500 text-red-500" : "text-gray-600 hover:text-red-400"
+              }`}
+            />
+          </button>
          
         </div>
         

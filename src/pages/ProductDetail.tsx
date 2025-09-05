@@ -238,15 +238,22 @@ const ProductDetail: React.FC = () => {
             <div className="flex space-x-4">
               <button
                 onClick={handleAddToCart}
+                disabled={!selectedSize || !selectedColor}
                 className={`flex-1 py-3 px-6 rounded-lg font-medium transition-all duration-200 ${
                   isAdded
                     ? "bg-green-600 text-white"
+                    : (!selectedSize || !selectedColor)
+                    ? "bg-gray-400 text-white cursor-not-allowed"
                     : "bg-black text-white hover:bg-gray-800"
                 }`}
               >
                 {isAdded ? (
                   <span className="flex items-center justify-center">
                     ✓ Added to Cart
+                  </span>
+                ) : (!selectedSize || !selectedColor) ? (
+                  <span className="flex items-center justify-center">
+                    Select Size & Color
                   </span>
                 ) : (
                   <span className="flex items-center justify-center">

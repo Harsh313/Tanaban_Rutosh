@@ -65,7 +65,7 @@ const SignupForm: React.FC = () => {
           <Link to="/" className="flex justify-center items-center space-x-3">
             <img 
               src="/logo.jpg" 
-              alt="Tanabana Logo" 
+              alt="RUTOSH Logo" 
               className="h-12 w-12 object-contain"
             />
             <span className="text-3xl font-bold text-black tracking-wide">RUTOSH</span>

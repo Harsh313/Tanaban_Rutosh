@@ -32,7 +32,7 @@ const Header: React.FC = () => {
           <Link to="/" className="flex items-center space-x-3">
             <img 
               src="/logo.jpg" 
-              alt="Taanabaana Logo" 
+              alt="RUTOSH Logo" 
               className="h-10 w-10 object-contain rounded-full"
             />
            <div className="w-full max-w-[700px] px-2 sm:px-3 md:px-4 mx-auto">
@@ -45,20 +45,20 @@ const Header: React.FC = () => {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex space-x-8">
-            <Link to="/products" className="relative after:absolute after:left-0 after:bottom-0 after:w-0 after:h-[2px] after:bg-black after:transition-all after:duration-300 after:ease-in-out hover:after:w-full">
-            Cord-sets
+            <Link to="/products" className="text-gray-700 hover:text-black transition-colors relative after:absolute after:left-0 after:bottom-0 after:w-0 after:h-[2px] after:bg-black after:transition-all after:duration-300 after:ease-in-out hover:after:w-full">
+              All Products
             </Link>
-            <Link to="/categories/dresses" className="relative after:absolute after:left-0 after:bottom-0 after:w-0 after:h-[2px] after:bg-black after:transition-all after:duration-300 after:ease-in-out hover:after:w-full">
+            <Link to="/categories/dresses" className="text-gray-700 hover:text-black transition-colors relative after:absolute after:left-0 after:bottom-0 after:w-0 after:h-[2px] after:bg-black after:transition-all after:duration-300 after:ease-in-out hover:after:w-full">
               Dresses
             </Link>
-            <Link to="/categories/tops" className="relative after:absolute after:left-0 after:bottom-0 after:w-0 after:h-[2px] after:bg-black after:transition-all after:duration-300 after:ease-in-out hover:after:w-full">
+            <Link to="/categories/tops" className="text-gray-700 hover:text-black transition-colors relative after:absolute after:left-0 after:bottom-0 after:w-0 after:h-[2px] after:bg-black after:transition-all after:duration-300 after:ease-in-out hover:after:w-full">
               Tops
             </Link>
-            <Link to="/categories/bottoms" className="relative after:absolute after:left-0 after:bottom-0 after:w-0 after:h-[2px] after:bg-black after:transition-all after:duration-300 after:ease-in-out hover:after:w-full">
+            <Link to="/categories/bottoms" className="text-gray-700 hover:text-black transition-colors relative after:absolute after:left-0 after:bottom-0 after:w-0 after:h-[2px] after:bg-black after:transition-all after:duration-300 after:ease-in-out hover:after:w-full">
               Bottoms
             </Link>
-            <Link to="/categories/accessories" className="relative after:absolute after:left-0 after:bottom-0 after:w-0 after:h-[2px] after:bg-black after:transition-all after:duration-300 after:ease-in-out hover:after:w-full">
-              Denium
+            <Link to="/categories/accessories" className="text-gray-700 hover:text-black transition-colors relative after:absolute after:left-0 after:bottom-0 after:w-0 after:h-[2px] after:bg-black after:transition-all after:duration-300 after:ease-in-out hover:after:w-full">
+              Accessories
             </Link>
           </nav>
 
@@ -152,8 +152,8 @@ const Header: React.FC = () => {
               <Link to="/categories/bottoms" className="text-gray-700 hover:text-black transition-colors">
                 Bottoms
               </Link>
-              <Link to="/categories/Denium" className="text-gray-700 hover:text-black transition-colors">
-                Denium
+              <Link to="/categories/accessories" className="text-gray-700 hover:text-black transition-colors">
+                Accessories
               </Link>
             </div>
           </div>

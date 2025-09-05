@@ -5,33 +5,6 @@ import { useCart } from "../contexts/CartContext";
 import Checkout from "./Checkout";
 import { CartItem } from "../types/checkout";
 
-interface RawCartItem {
-  id?: string;
-  product_id?: string;
-  name?: string;
-  product_name?: string;
-  price?: number;
-  unit_price?: number;
-  quantity: number;
-  size?: string;
-  color?: string;
-  image?: string;
-  product_image?: string;
-  image_url?: string;
-}
-
-const convertToCartItems = (cartItems: RawCartItem[]): CartItem[] => {
-  return cartItems.map((item) => ({
-    id: item.id || item.product_id || "",
-    name: item.name || item.product_name || "",
-    price: item.price || item.unit_price || 0,
-    quantity: item.quantity,
-    size: item.size || "",
-    color: item.color || "",
-    image: item.image || item.product_image || item.image_url || "",
-  }));
-};
-
 const Cart: React.FC = () => {
   const [showCheckout, setShowCheckout] = useState(false);
   const { state, removeItem, updateQuantity, clearCart } = useCart();
@@ -157,7 +130,15 @@ const Cart: React.FC = () => {
       {/* Checkout Modal */}
       {showCheckout && (
         <Checkout
-          cartItems={convertToCartItems(state.items)}
+          cartItems={state.items.map(item => ({
+            id: item.id,
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+            size: item.size,
+            color: item.color,
+            image: item.image_url
+          }))}
           subtotal={state.total}
           tax={tax}
           shipping={0}

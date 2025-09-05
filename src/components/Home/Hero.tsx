@@ -12,6 +12,9 @@ const Hero: React.FC = () => {
       <div className="relative z-10 flex items-center justify-center h-full">
         <div className="text-center text-white max-w-4xl mx-auto px-4">
           
+          <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-wide">
+            RUTOSH
+          </h1>
           <p className="text-xl md:text-2xl mb-8 font-light tracking-wide">
             Minimalist fashion for the modern woman
           </p>

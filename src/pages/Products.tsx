@@ -85,7 +85,7 @@ const Products: React.FC = () => {
    const categories = ['dresses', 'tops', 'Cargo', 'Pants', 'Cord-Sets', 'Cotton']
   const priceRanges = [
     { label: 'Under ₹1500', value: '0-1500' },
-    { label: '₹1500 - ₹2500', value: '1500-2000' },
+    { label: '₹1500 - ₹2500', value: '1500-2500' },
     { label: '₹2500 - ₹5000', value: '2500-5000' },
      { label: '₹5000 - ₹10000', value: '5000-10000' },
     { label: '₹10000+', value: '10000-' }
