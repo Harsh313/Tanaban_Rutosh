@@ -5,7 +5,7 @@ import { ArrowRight } from 'lucide-react'
 const Hero: React.FC = () => {
   return (
     <section className="relative h-screen bg-gradient-to-br from-gray-50 to-white">
-      <div className="absolute inset-0 bg-[url('./public/hero.jpg')] bg-cover bg-center bg-no-repeat">
+      <div className="absolute inset-0 bg-[url('https://apuyqxvlwmctcxrdtcsf.supabase.co/storage/v1/object/public/product-images/hero.jpg')] bg-cover bg-center bg-no-repeat">
         <div className="absolute inset-0 bg-black bg-opacity-30"></div>
       </div>
       
