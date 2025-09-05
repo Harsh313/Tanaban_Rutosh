@@ -35,12 +35,16 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       const { data: { user }, error: userError } = await supabase.auth.getUser()
 
       if (userError) {
-        console.error(" Error fetching user:", userError)
+        if (userError.message === 'Auth session missing!') {
+          console.info("ℹ Auth session missing - user not logged in")
+        } else {
+          console.error("❌ Error fetching user:", userError)
+        }
         return
       }
       
       if (!user) {
-        console.log("ℹ No user logged in — skipping wishlist check")
+        console.info("ℹ No user logged in — skipping wishlist check")
         return
       }
 
