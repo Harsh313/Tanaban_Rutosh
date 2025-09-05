@@ -74,11 +74,11 @@ export const checkoutService = {
 
       return new Promise((resolve) => {
         const options = {
-          key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+          key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_R7ebb6bkozcI3M',
           amount: razorpayOrder.amount,
           currency: razorpayOrder.currency,
-          name: 'Your Store Name',
-          description: 'Purchase from Your Store',
+          name: 'RUTOSH',
+          description: 'Purchase from RUTOSH',
           order_id: razorpayOrder.id,
           prefill: {
             name: checkoutData.shippingAddress.name,
