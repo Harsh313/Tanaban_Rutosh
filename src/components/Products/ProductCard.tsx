@@ -29,44 +29,34 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const [isWishlisted, setIsWishlisted] = React.useState(false)
 
   
-  useEffect(() => {
-    const fetchWishlistStatus = async () => {
-      console.log("🔍 Checking wishlist status for product:", product.id)
-      const { data: { user }, error: userError } = await supabase.auth.getUser()
+useEffect(() => {
+  const fetchWishlistStatus = async () => {
+    console.log("🔍 Checking wishlist status for product:", product.id)
 
-      if (userError) {
-        if (userError.message === 'Auth session missing!') {
-          console.info("ℹ Auth session missing - user not logged in")
-        } else {
-          console.error("❌ Error fetching user:", userError)
-        }
-        return
-      }
-      
-      if (!user) {
-        console.info("ℹ No user logged in — skipping wishlist check")
-        return
-      }
+    const { data: { user }, error: userError } = await supabase.auth.getUser()
+    console.log("👤 User from supabase.auth.getUser:", user, "Error:", userError)
 
-      const { data, error } = await supabase
-        .from("wishlist")
-        .select("id")
-        .eq("user_id", user.id)
-        .eq("product_id", product.id)
-        .single()
-
-      if (error && error.code !== "PGRST116") { // Ignore 'No rows found' error
-        console.error(" Error checking wishlist:", error)
-      } else if (data) {
-        console.log(" Product is in wishlist:", data)
-        setIsWishlisted(true)
-      } else {
-        console.log("ℹ Product not in wishlist")
-      }
+    if (!user) {
+      console.info("ℹ No user logged in — skipping wishlist check")
+      return
     }
 
-    fetchWishlistStatus()
-  }, [product.id])
+    const { data, error } = await supabase
+      .from("wishlist")
+      .select("id")
+      .eq("user_id", user.id)
+      .eq("product_id", product.id)
+      .single()
+
+    console.log("📌 Wishlist query result:", { data, error })
+
+    if (data) {
+      setIsWishlisted(true)
+    }
+  }
+
+  fetchWishlistStatus()
+}, [product.id])
 
   const toggleWishlist = async (e: React.MouseEvent) => {
     e.preventDefault()
