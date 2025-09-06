@@ -36,51 +36,55 @@ const Products: React.FC = () => {
   }, [searchQuery, categoryFilter, sortBy, filters])
 
   const fetchProducts = async () => {
-    setLoading(true)
-    try {
-      let query = supabase.from('products').select('*')
+  setLoading(true)
+  try {
+    console.log("🔍 Fetching products with filters:", {
+      searchQuery,
+      categoryFilter,
+      filters,
+      sortBy
+    })
 
-      // Apply search query
-      if (searchQuery) {
-        query = query.ilike('name', `%${searchQuery}%`)
-      }
+    let query = supabase.from('products').select('*')
 
-      // Apply category filter
-      if (categoryFilter || filters.category) {
-        query = query.eq('category', categoryFilter || filters.category)
-      }
-
-      // Apply price range filter
-      if (filters.priceRange) {
-        const [min, max] = filters.priceRange.split('-').map(Number)
-        query = query.gte('price', min)
-        if (max) query = query.lte('price', max)
-      }
-
-      // Apply sorting
-      if (sortBy === 'price-asc') {
-        query = query.order('price', { ascending: true })
-      } else if (sortBy === 'price-desc') {
-        query = query.order('price', { ascending: false })
-      } else if (sortBy === 'name') {
-        query = query.order('name', { ascending: true })
-      } else if (sortBy === 'newest') {
-        query = query.order('created_at', { ascending: false })
-      }
-
-      const { data, error } = await query
-
-      if (error) {
-        console.error('Error fetching products:', error)
-      } else {
-        setProducts(data || [])
-      }
-    } catch (error) {
-      console.error('Error:', error)
-    } finally {
-      setLoading(false)
+    if (searchQuery) {
+      console.log("🔎 Applying search filter:", searchQuery)
+      query = query.ilike('name', `%${searchQuery}%`)
     }
+
+    if (categoryFilter || filters.category) {
+      console.log("📂 Applying category filter:", categoryFilter || filters.category)
+      query = query.eq('category', categoryFilter || filters.category)
+    }
+
+    if (filters.priceRange) {
+      const [min, max] = filters.priceRange.split('-').map(Number)
+      console.log("💰 Applying price range:", { min, max })
+      query = query.gte('price', min)
+      if (max) query = query.lte('price', max)
+    }
+
+    // Sorting logs
+    console.log("↕️ Applying sort:", sortBy)
+
+    const { data, error } = await query
+  
+   console.log("📦 Supabase raw response:", { data, error })
+
+
+    if (error) {
+      console.error("❌ Error fetching products:", error)
+    } else {
+      console.log("✅ Products fetched:", data)
+      setProducts(data || [])
+    }
+  } catch (error) {
+    console.error("🔥 Exception fetching products:", error)
+  } finally {
+    setLoading(false)
   }
+}
+
 
    const categories = ['dresses', 'tops', 'Cargo', 'Pants', 'Cord-Sets', 'Cotton']
   const priceRanges = [

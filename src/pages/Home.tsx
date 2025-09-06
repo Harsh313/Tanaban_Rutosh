@@ -3,6 +3,9 @@ import Hero from '../components/Home/Hero'
 import FeaturedProducts from '../components/Home/FeaturedProducts'
 
 const Home: React.FC = () => {
+
+  console.log("🏠 Home page mounted")
+  
   return (
     <div>
       <Hero />
